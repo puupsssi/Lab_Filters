@@ -14,6 +14,12 @@ namespace Lab_Filters
     {
         Bitmap image;
         Bitmap originalImage;
+        int[,] structuralElement = new int[,]
+            {
+                { 0, 1, 0 },
+                { 1, 1, 1 },
+                { 0, 1, 0 }
+            };
         public Form1()
         {
             InitializeComponent();
@@ -183,6 +189,54 @@ namespace Lab_Filters
         private void поОсиYToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             Filters filter = new ShappaY();
+            backgroundWorker1.RunWorkerAsync(filter);
+        }
+
+        private void диToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Filters filter = new Dilation();
+            backgroundWorker1.RunWorkerAsync(filter);
+        }
+
+        private void erosionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Filters filter = new Erosion();
+            backgroundWorker1.RunWorkerAsync(filter);
+        }
+
+        private void openingToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Filters filter = new Opening();
+            backgroundWorker1.RunWorkerAsync(filter);
+        }
+
+        private void closingToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Filters filter = new Closing();
+            backgroundWorker1.RunWorkerAsync(filter);
+        }
+
+        private void topHatToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Filters filter = new TopHat();
+            backgroundWorker1.RunWorkerAsync(filter);
+        }
+
+        private void gradToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Filters filter = new Grad();
+            backgroundWorker1.RunWorkerAsync(filter);
+        }
+
+        private void blackHatToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Filters filter = new BlackHat();
+            backgroundWorker1.RunWorkerAsync(filter);
+        }
+
+        private void dopZadanieToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Filters filter = new DopZad();
             backgroundWorker1.RunWorkerAsync(filter);
         }
     }

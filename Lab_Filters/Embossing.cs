@@ -9,35 +9,57 @@ namespace Lab_Filters
 {
     class Embossing : MatrixFilter
     {
-        private int[,] kernel = { { 0, 1, 0,},
-                                  { 1, 0, -1,},
-                                  { 0, -1, 0,}
+        private int[,] kernel = { { 0, 1, 0 },
+                                  { 1, 0, -1 },
+                                  { 0, -1, 0 }
                                 }; // ядро
+        private const int brightnessShift = 128; // Сдвиг по яркости
+
         protected override Color calculateNewPixelColor(Bitmap sourceImage, int x, int y)
         {
-            int kernelSize = 3;
-            int radius = kernelSize / 2; // вычисление половины ядра(радиус)
+            int newR = 0;
+            int newG = 0;
+            int newB = 0;
 
-            float intensity = 0;
-            for (int i = -radius; i <= radius; i++)
+            // Применяем ядро тиснения
+            for (int i = -1; i <= 1; i++)
             {
-                for (int j = -radius; j <= radius; j++)
+                for (int j = -1; j <= 1; j++)
                 {
-                    int pixelX = Clamp(x + i, 0, sourceImage.Width - 1);
-                    int pixelY = Clamp(y + i, 0, sourceImage.Height - 1);
+                    int neighborX = x + j;
+                    int neighborY = y + i;
 
-                    Color pixelColor = sourceImage.GetPixel(pixelX, pixelY);
+                    // Проверка границ
+                    if (neighborX < 0 || neighborX >= sourceImage.Width || neighborY < 0 || neighborY >= sourceImage.Height)
+                    {
+                        continue; // Пропускаем пиксели за пределами изображения
+                    }
 
-                    int grayValue = (int)(0.299 * pixelColor.R + 0.587 * pixelColor.G + 0.114 * pixelColor.B); // оттенки серого
-                    intensity = intensity + grayValue * kernel[i + radius, j + radius];
+                    Color neighborColor = sourceImage.GetPixel(neighborX, neighborY);
+                    int intensity = (int)(0.36 * neighborColor.R + 0.53 * neighborColor.G + 0.11 * neighborColor.B);
+
+                    // Применяем ядро
+                    int kernelValue = kernel[i + 1, j + 1];
+                    newR += kernelValue * intensity;
+                    newG += kernelValue * intensity;
+                    newB += kernelValue * intensity;
                 }
             }
-            intensity = Math.Max(0, Math.Min(255, intensity + 255));  // Переводим в полутоновое изображение 
-            intensity = (float)(intensity / 2.0);
 
-            return Color.FromArgb((int)intensity, (int)intensity, (int)intensity);
+            // Добавляем сдвиг по яркости
+            newR += brightnessShift;
+            newG += brightnessShift;
+            newB += brightnessShift;
 
+            // Нормализация значений
+            newR = Clamp(newR, 0, 255);
+            newG = Clamp(newG, 0, 255);
+            newB = Clamp(newB, 0, 255);
+
+            // Создаем новый цвет
+            return Color.FromArgb(newR, newG, newB);
         }
+
         private int Clamp(int value, int min, int max)
         {
             return Math.Max(min, Math.Min(value, max));
